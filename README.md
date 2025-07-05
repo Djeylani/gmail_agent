@@ -2,6 +2,18 @@
 
 A Python-based Gmail automation tool that helps manage your inbox with features like reading unread emails and automated unsubscribing.
 
+## Before & After
+
+See the transformation of a cluttered inbox into an organized, manageable email experience:
+
+### Before: Overwhelming Inbox
+![Before - Cluttered Inbox](assets/before.png)
+*Hundreds of unread emails, newsletters, and notifications creating inbox chaos*
+
+### After: Clean & Organized
+![After - Clean Inbox](assets/after.png)
+*Streamlined inbox with automated cleanup and smart organization*
+
 ## Features
 
 - 📧 Read and display unread emails
