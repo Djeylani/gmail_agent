@@ -1,5 +1,15 @@
 from app.draft_assistant import get_drafts, get_draft_body, generate_reply, is_safe_draft
 
+context = {
+    "name": "Fatima",
+    "subject": "Collaboration Opportunity",
+    "topic": "ethical AI",
+    "body": "I'd love to explore how our work might align and benefit the ummah."
+}
+
+email = generate_reply("reply_spiritual.j2", context)
+print(email)
+
 drafts = get_drafts()
 
 for draft in drafts:
