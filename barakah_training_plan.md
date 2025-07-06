@@ -1,5 +1,3 @@
-Certainly, Dee. Here is the **clean copy of the `barakah_training_plan.md` file**, with no additional text or formatting beyond the file content itself.
-
 ```markdown
 # BarakahMail Training & Personalization Plan
 
