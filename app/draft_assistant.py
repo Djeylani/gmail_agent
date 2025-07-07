@@ -6,24 +6,27 @@ from jinja2 import Environment, FileSystemLoader
 from pathlib import Path
 
 from app.auth import get_gmail_service
+from app.content_filter import is_halal, scan_text
 
 # ─── JINJA2 TEMPLATE SETUP ──────────────────────────────────────────────
 TEMPLATE_DIR = Path(__file__).parent.parent / "templates"
 env = Environment(loader=FileSystemLoader(TEMPLATE_DIR), autoescape=True)
 
 
-def generate_templated_reply(template_name: str, context: dict) -> str:
+def generate_templated_reply(template_name: str, context: dict, strict_halal: bool = False) -> str:
     """
     Render a reply using a Jinja2 template.
+    If strict_halal is True, scan the result for sensitive content.
     """
     template = env.get_template(template_name)
-    return template.render(context)
+    rendered = template.render(context)
 
+    if strict_halal and not is_halal(rendered):
+        flagged = scan_text(rendered)
+        raise ValueError(f"⚠️ Draft contains non-halal content: {', '.join(set(flagged))}")
 
-# alias so your existing tests that do `from app.draft_assistant import generate_reply` still work
-generate_reply = generate_templated_reply
-
-
+    return rendered
+generate_reply = generate_templated_reply  # Alias for convenience
 # ─── DRAFTS / GMAIL UTILITIES ──────────────────────────────────────────
 def get_drafts(max_results: int = 12) -> list:
     """

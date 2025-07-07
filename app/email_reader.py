@@ -46,3 +46,34 @@ def get_thread_text(message_id):
                     decoded = urlsafe_b64decode(data).decode('utf-8', errors='ignore')
                     full_text += decoded + "\n\n"
     return full_text.strip()
+
+def get_thread_replies(thread_id):
+    """
+    Fetch all replies in a thread (excluding the original sent message).
+    """
+    service = get_gmail_service()
+    thread = service.users().threads().get(userId='me', id=thread_id).execute()
+    messages = thread.get('messages', [])
+
+    # Exclude the first message (assumed to be the one you sent)
+    return messages[1:] if len(messages) > 1 else []
+
+def get_sent_emails(max_results=50):
+    """
+    Fetch recent sent emails.
+    """
+    service = get_gmail_service()
+    results = service.users().messages().list(
+        userId='me',
+        labelIds=['SENT'],
+        maxResults=max_results
+    ).execute()
+
+    messages = results.get('messages', [])
+    sent_emails = []
+
+    for msg in messages:
+        full_msg = service.users().messages().get(userId='me', id=msg['id']).execute()
+        sent_emails.append(full_msg)
+
+    return sent_emails

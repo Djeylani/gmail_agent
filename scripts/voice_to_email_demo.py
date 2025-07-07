@@ -7,6 +7,7 @@ sys.path.append(str(Path(__file__).resolve().parent.parent))
 from app.record_audio import record_audio
 from app.voice_to_email import transcribe_audio, format_email_from_transcript
 from app.email_sender import send_email
+from app.voice_router import interpret_command
 
 # Record
 audio_path = record_audio(duration=10)
@@ -23,3 +24,8 @@ print(f"\n📧 Formatted Email:\nTo: {email['to']}\nSubject: {email['subject']}\
 # Step 4: Send the email
 send_email(to="deesthought@gmail.com", subject=email["subject"], body=email["body"])
 print("✅ Email sent to deesthought@gmail.com")
+
+# Step 5: Interpret the command
+intent = interpret_command(transcript)
+print(f"\n🧭 Detected Intent: {intent}")
+

@@ -1,28 +1,28 @@
-from app.draft_assistant import get_drafts, get_draft_body, generate_reply, is_safe_draft
+import pytest
+from app.draft_assistant import generate_reply
 
-context = {
-    "name": "Fatima",
-    "subject": "Collaboration Opportunity",
-    "topic": "ethical AI",
-    "body": "I'd love to explore how our work might align and benefit the ummah."
-}
+def test_halal_filter_blocks_sensitive_reply():
+    context = {
+        "name": "Ali",
+        "subject": "Weekend Plan",
+        "topic": "Wine tasting",
+        "body": "Let's meet at the wine bar after work."
+    }
 
-email = generate_reply("reply_spiritual.j2", context)
-print(email)
+    with pytest.raises(ValueError) as exc_info:
+        generate_reply("reply_spiritual.j2", context, strict_halal=True)
 
-drafts = get_drafts()
+    assert "non-halal content" in str(exc_info.value)
 
-for draft in drafts:
-    draft_id = draft['id']
-    body = get_draft_body(draft_id)
-    if not body:
-        print("⚠️ No body found in draft.")
-        continue
 
-    if not is_safe_draft(body):
-        print("🔒 Skipping sensitive draft.")
-        continue
+def test_halal_filter_allows_clean_reply():
+    context = {
+        "name": "Fatima",
+        "subject": "Collaboration Opportunity",
+        "topic": "ethical AI",
+        "body": "I'd love to explore how our work might align and benefit the ummah."
+    }
 
-    print(f"\n✉️ Draft:\n{body}")
-    reply = generate_reply(body)
-    print(f"\n🤖 Suggested Reply:\n{reply}")
+    email = generate_reply("reply_spiritual.j2", context, strict_halal=True)
+    assert "Fatima" in email
+    assert "ethical AI" in email
