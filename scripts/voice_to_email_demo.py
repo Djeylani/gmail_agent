@@ -1,31 +1,36 @@
 import sys
+import argparse
 from pathlib import Path
 
 # Add the project root to sys.path
 sys.path.append(str(Path(__file__).resolve().parent.parent))
 
 from app.record_audio import record_audio
-from app.voice_to_email import transcribe_audio, format_email_from_transcript
-from app.email_sender import send_email
-from app.voice_router import interpret_command
+from app.voice_to_email import transcribe_audio
+from app.voice_router import interpret_command, compose_email_from_voice
 
-# Record
-audio_path = record_audio(duration=10)
+# Parse arguments
+parser = argparse.ArgumentParser(description="Voice to Email Demo")
+parser.add_argument("--debug", action="store_true", help="Use text input instead of voice")
+args = parser.parse_args()
 
-# Transcribe
-transcript = transcribe_audio(audio_path)
-print(f"\n📝 Transcript:\n{transcript}")
+if args.debug:
+    # Debug mode: use text input
+    transcript = input("📝 Enter your message: ")
+    audio_path = None
+else:
+    # Record and transcribe
+    audio_path = record_audio(duration=10)
+    transcript = transcribe_audio(audio_path)
+    print(f"\n📝 Transcript:\n{transcript}")
 
-# Format
-email = format_email_from_transcript(transcript, recipient="Fatima")
-print(f"\n📧 Formatted Email:\nTo: {email['to']}\nSubject: {email['subject']}\n\n{email['body']}")
-
-
-# Step 4: Send the email
-send_email(to="deesthought@gmail.com", subject=email["subject"], body=email["body"])
-print("✅ Email sent to deesthought@gmail.com")
-
-# Step 5: Interpret the command
+# Interpret the command
 intent = interpret_command(transcript)
 print(f"\n🧭 Detected Intent: {intent}")
+
+# Use voice confirmation flow
+if intent == "compose_email":
+    compose_email_from_voice(transcript, audio_path or "debug_mode", debug_mode=args.debug)
+else:
+    print(f"Intent '{intent}' not handled in this demo")
 
