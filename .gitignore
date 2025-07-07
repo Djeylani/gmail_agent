@@ -4,3 +4,19 @@ __pycache__/
 credentials.json
 token.pickle
 token.json
+
+# Audio recordings (may contain private voice data)
+recordings/
+*.wav
+*.mp3
+*.m4a
+
+# Interaction logs (contain private email content and recipients)
+logs/
+*.jsonl
+*.log
+
+# Virtual environment
+.venv/
+venv/
+env/
